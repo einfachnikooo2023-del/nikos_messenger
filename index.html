@@ -248,6 +248,9 @@
 <body>
   <!-- Popup Menü oben rechts -->
   <div id="popupMenu" class="popup-menu">
+    <div class="popup-item" onclick="handleMenuClick('videocall')">
+      <i class="fa-solid fa-video"></i> Videoanruf starten
+    </div>
     <div class="popup-item" onclick="handleMenuClick('edit')">
       <i class="fa-solid fa-pen"></i> Bearbeiten
     </div>
@@ -326,6 +329,12 @@
       document.getElementById('popupMenu').style.display = 'none';
 
       switch(option) {
+        case 'videocall':
+          // Generate random user ID for demo
+          const userId = 'user-' + Math.random().toString(36).substr(2, 9);
+          const groupId = 'main-group';
+          window.location.href = `call.html?groupId=${groupId}&userId=${userId}`;
+          break;
         case 'edit':
           alert('Gruppe bearbeiten...');
           break;
