@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gruppenanruf</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-dark: #0A0F1A;
+      --blue: #0A3D62;
+      --light-blue: #4FC3F7;
+      --text-light: #EAEAEA;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      overflow: hidden;
+    }
+
+    /* Video Grid Container */
+    .video-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 80px;
+      display: grid;
+      gap: 8px;
+      padding: 8px;
+      background: var(--bg-dark);
+    }
+
+    /* Grid layouts based on participant count */
+    .video-container.grid-1 {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+    }
+
+    .video-container.grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: 1fr;
+    }
+
+    .video-container.grid-3,
+    .video-container.grid-4 {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+    }
+
+    .video-container.grid-5,
+    .video-container.grid-6 {
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+    }
+
+    .video-container.grid-7,
+    .video-container.grid-8,
+    .video-container.grid-9 {
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+    }
+
+    .video-container.grid-10,
+    .video-container.grid-11,
+    .video-container.grid-12,
+    .video-container.grid-13,
+    .video-container.grid-14,
+    .video-container.grid-15,
+    .video-container.grid-16 {
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+    }
+
+    .video-container.grid-17,
+    .video-container.grid-18,
+    .video-container.grid-19,
+    .video-container.grid-20,
+    .video-container.grid-21,
+    .video-container.grid-22,
+    .video-container.grid-23,
+    .video-container.grid-24,
+    .video-container.grid-25,
+    .video-container.grid-26,
+    .video-container.grid-27,
+    .video-container.grid-28,
+    .video-container.grid-29,
+    .video-container.grid-30,
+    .video-container.grid-31,
+    .video-container.grid-32 {
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+    }
+
+    /* Video Tile */
+    .video-tile {
+      position: relative;
+      background: #1a1a2e;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 0;
+    }
+
+    .video-tile video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000;
+    }
+
+    .video-tile .placeholder {
+      width: 80px;
+      height: 80px;
+      background: var(--blue);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      color: white;
+      font-weight: bold;
+    }
+
+    .video-tile .user-info {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .video-tile .user-info i {
+      font-size: 12px;
+    }
+
+    .video-tile .muted {
+      color: #ff4444;
+    }
+
+    /* Controls */
+    .controls {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: rgba(13, 21, 36, 0.95);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      padding: 0 20px;
+      border-top: 1px solid var(--blue);
+    }
+
+    .control-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: none;
+      background: var(--blue);
+      color: white;
+      font-size: 22px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .control-btn:hover {
+      background: var(--light-blue);
+      transform: scale(1.1);
+    }
+
+    .control-btn.active {
+      background: var(--light-blue);
+    }
+
+    .control-btn.danger {
+      background: #ff4444;
+    }
+
+    .control-btn.danger:hover {
+      background: #cc0000;
+    }
+
+    /* Participant count badge */
+    .participant-count {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .participant-count i {
+      color: var(--light-blue);
+    }
+
+    /* Loading screen */
+    .loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bg-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .loading.hidden {
+      display: none;
+    }
+
+    .loading h2 {
+      margin-top: 20px;
+      color: var(--light-blue);
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(79, 195, 247, 0.3);
+      border-top-color: var(--light-blue);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive adjustments for mobile */
+    @media (max-width: 768px) {
+      .video-container {
+        gap: 4px;
+        padding: 4px;
+      }
+
+      .control-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 18px;
+      }
+
+      .controls {
+        gap: 12px;
+        padding: 0 10px;
+      }
+
+      .video-tile .placeholder {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+      }
+
+      .video-tile .user-info {
+        font-size: 12px;
+        padding: 2px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <h2>Verbindung wird hergestellt...</h2>
+  </div>
+
+  <!-- Participant Count -->
+  <div class="participant-count">
+    <i class="fa-solid fa-users"></i>
+    <span id="participantCount">1</span>
+  </div>
+
+  <!-- Video Grid -->
+  <div id="videoContainer" class="video-container grid-1">
+    <!-- Video tiles will be added here dynamically -->
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button id="toggleAudio" class="control-btn active" title="Mikrofon">
+      <i class="fa-solid fa-microphone"></i>
+    </button>
+    <button id="toggleVideo" class="control-btn active" title="Kamera">
+      <i class="fa-solid fa-video"></i>
+    </button>
+    <button id="leaveCall" class="control-btn danger" title="Anruf beenden">
+      <i class="fa-solid fa-phone-slash"></i>
+    </button>
+    <button id="toggleParticipants" class="control-btn" title="Teilnehmer">
+      <i class="fa-solid fa-users"></i>
+    </button>
+  </div>
+
+  <!-- Socket.IO and WebRTC Manager -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="webrtc-manager.js"></script>
+  <script>
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const groupId = urlParams.get('groupId') || 'default-group';
+    const userId = urlParams.get('userId') || 'user-' + Math.random().toString(36).substr(2, 9);
+
+    // Initialize Socket.IO
+    const socket = io();
+
+    let localStream = null;
+    let callManager = null;
+    let audioEnabled = true;
+    let videoEnabled = true;
+
+    // DOM elements
+    const loading = document.getElementById('loading');
+    const videoContainer = document.getElementById('videoContainer');
+    const participantCountEl = document.getElementById('participantCount');
+    const toggleAudioBtn = document.getElementById('toggleAudio');
+    const toggleVideoBtn = document.getElementById('toggleVideo');
+    const leaveCallBtn = document.getElementById('leaveCall');
+    const toggleParticipantsBtn = document.getElementById('toggleParticipants');
+
+    // Initialize call
+    async function initCall() {
+      try {
+        // Get local media stream
+        localStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
+
+        // Add local video
+        addVideoTile('local', localStream, 'Du', true);
+
+        // Initialize call manager
+        callManager = new GroupCallManager(socket, localStream);
+
+        // Set up event handlers
+        callManager.onRemoteStreamAdded = (socketId, stream, userId) => {
+          addVideoTile(socketId, stream, userId || 'Teilnehmer');
+          updateParticipantCount();
+        };
+
+        callManager.onRemoteStreamRemoved = (socketId) => {
+          removeVideoTile(socketId);
+          updateParticipantCount();
+        };
+
+        // Start the call
+        callManager.startCall(groupId, userId);
+
+        // Hide loading
+        loading.classList.add('hidden');
+      } catch (error) {
+        console.error('Error initializing call:', error);
+        alert('Fehler beim Zugriff auf Kamera/Mikrofon: ' + error.message);
+      }
+    }
+
+    // Add video tile to grid
+    function addVideoTile(id, stream, name, isLocal = false) {
+      // Check if tile already exists
+      if (document.getElementById('tile-' + id)) {
+        return;
+      }
+
+      const tile = document.createElement('div');
+      tile.id = 'tile-' + id;
+      tile.className = 'video-tile';
+
+      const video = document.createElement('video');
+      video.srcObject = stream;
+      video.autoplay = true;
+      video.playsinline = true;
+      if (isLocal) {
+        video.muted = true; // Mute local video to avoid feedback
+      }
+
+      const userInfo = document.createElement('div');
+      userInfo.className = 'user-info';
+      userInfo.innerHTML = `
+        <span>${name}</span>
+        <i class="fa-solid fa-microphone${audioEnabled && isLocal ? '' : '-slash'} ${audioEnabled && isLocal ? '' : 'muted'}"></i>
+      `;
+
+      tile.appendChild(video);
+      tile.appendChild(userInfo);
+      videoContainer.appendChild(tile);
+
+      updateGridLayout();
+    }
+
+    // Remove video tile
+    function removeVideoTile(id) {
+      const tile = document.getElementById('tile-' + id);
+      if (tile) {
+        tile.remove();
+        updateGridLayout();
+      }
+    }
+
+    // Update grid layout based on participant count
+    function updateGridLayout() {
+      const tileCount = videoContainer.children.length;
+      
+      // Remove all grid classes
+      videoContainer.className = 'video-container';
+      
+      // Add appropriate grid class
+      if (tileCount <= 32) {
+        videoContainer.classList.add('grid-' + tileCount);
+      } else {
+        videoContainer.classList.add('grid-32'); // Max layout
+      }
+    }
+
+    // Update participant count
+    function updateParticipantCount() {
+      const count = videoContainer.children.length;
+      participantCountEl.textContent = count;
+    }
+
+    // Toggle audio
+    toggleAudioBtn.addEventListener('click', () => {
+      audioEnabled = !audioEnabled;
+      if (callManager) {
+        callManager.toggleAudio(audioEnabled);
+      }
+      
+      toggleAudioBtn.classList.toggle('active', audioEnabled);
+      const icon = toggleAudioBtn.querySelector('i');
+      icon.className = audioEnabled ? 'fa-solid fa-microphone' : 'fa-solid fa-microphone-slash';
+      
+      // Update local tile
+      const localTile = document.getElementById('tile-local');
+      if (localTile) {
+        const micIcon = localTile.querySelector('.user-info i');
+        micIcon.className = audioEnabled ? 'fa-solid fa-microphone' : 'fa-solid fa-microphone-slash muted';
+      }
+    });
+
+    // Toggle video
+    toggleVideoBtn.addEventListener('click', () => {
+      videoEnabled = !videoEnabled;
+      if (callManager) {
+        callManager.toggleVideo(videoEnabled);
+      }
+      
+      toggleVideoBtn.classList.toggle('active', videoEnabled);
+      const icon = toggleVideoBtn.querySelector('i');
+      icon.className = videoEnabled ? 'fa-solid fa-video' : 'fa-solid fa-video-slash';
+    });
+
+    // Leave call
+    leaveCallBtn.addEventListener('click', () => {
+      if (confirm('Möchten Sie den Anruf wirklich beenden?')) {
+        if (callManager) {
+          callManager.leaveCall();
+        }
+        
+        // Stop local stream
+        if (localStream) {
+          localStream.getTracks().forEach(track => track.stop());
+        }
+
+        // Redirect back
+        window.location.href = 'index.html';
+      }
+    });
+
+    // Toggle participants list (placeholder)
+    toggleParticipantsBtn.addEventListener('click', () => {
+      alert('Teilnehmerliste wird in einer zukünftigen Version implementiert.');
+    });
+
+    // Initialize on page load
+    window.addEventListener('load', initCall);
+
+    // Clean up on page unload
+    window.addEventListener('beforeunload', () => {
+      if (callManager) {
+        callManager.leaveCall();
+      }
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+      }
+    });
+  </script>
+</body>
+</html>
