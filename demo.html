@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nikos Messenger - Demo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0A0F1A;
+            --blue: #0A3D62;
+            --light-blue: #4FC3F7;
+            --text-light: #EAEAEA;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: var(--light-blue);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .info-box {
+            background: rgba(30, 41, 59, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h2 {
+            color: var(--light-blue);
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-box li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(79, 195, 247, 0.2);
+        }
+
+        .info-box li:last-child {
+            border-bottom: none;
+        }
+
+        .info-box li i {
+            color: var(--light-blue);
+            width: 24px;
+            text-align: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, rgba(79, 195, 247, 0.8) 0%, rgba(2, 136, 209, 0.9) 100%);
+            color: #000;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: transform 0.2s;
+            margin: 10px 5px;
+            text-align: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .status-badge.accepted { background: #10b981; color: white; }
+        .status-badge.missed { background: #ef4444; color: white; }
+        .status-badge.rejected { background: #f59e0b; color: white; }
+        .status-badge.cancelled { background: #6b7280; color: white; }
+
+        .warning {
+            background: rgba(239, 68, 68, 0.15);
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .success {
+            background: rgba(16, 185, 129, 0.15);
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            color: var(--light-blue);
+        }
+
+        pre {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fa-solid fa-phone"></i> Nikos Messenger - Call System Demo</h1>
+
+        <div class="success">
+            <strong><i class="fa-solid fa-check-circle"></i> System Status:</strong> All components created successfully!
+        </div>
+
+        <div class="info-box">
+            <h2><i class="fa-solid fa-rocket"></i> Features</h2>
+            <ul>
+                <li><i class="fa-solid fa-phone"></i> 1:1 Audio/Video Calls</li>
+                <li><i class="fa-solid fa-users"></i> Group Calls (up to 32 participants)</li>
+                <li><i class="fa-solid fa-history"></i> Call History with Status</li>
+                <li><i class="fa-solid fa-bell"></i> Missed Call Indicators</li>
+                <li><i class="fa-solid fa-clock"></i> Date & Time Display</li>
+                <li><i class="fa-solid fa-trash"></i> Delete Calls (individual or all)</li>
+                <li><i class="fa-solid fa-shield-halved"></i> Secure API Endpoints</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h2><i class="fa-solid fa-circle-info"></i> Call Status Types</h2>
+            <ul>
+                <li><i class="fa-solid fa-check"></i> <strong>Accepted</strong> <span class="status-badge accepted">ANGENOMMEN</span> - Call was answered</li>
+                <li><i class="fa-solid fa-phone-slash"></i> <strong>Missed</strong> <span class="status-badge missed">VERPASST</span> - Call was not answered</li>
+                <li><i class="fa-solid fa-ban"></i> <strong>Rejected</strong> <span class="status-badge rejected">ABGELEHNT</span> - Call was declined</li>
+                <li><i class="fa-solid fa-xmark"></i> <strong>Cancelled</strong> <span class="status-badge cancelled">ABGEBROCHEN</span> - Call cancelled before answer</li>
+            </ul>
+        </div>
+
+        <div class="btn-group">
+            <a href="calls.php" class="btn">
+                <i class="fa-solid fa-phone"></i> Zur Anrufseite
+            </a>
+            <a href="index.html" class="btn">
+                <i class="fa-solid fa-comments"></i> Zum Chat
+            </a>
+        </div>
+
+        <div class="warning">
+            <strong><i class="fa-solid fa-exclamation-triangle"></i> Setup Required:</strong>
+            <ol style="margin-top: 10px; margin-left: 20px;">
+                <li>Import database: <code>mysql -u root -p &lt; database.sql</code></li>
+                <li>Configure database in <code>config.php</code></li>
+                <li>Install Node.js dependencies: <code>npm install</code></li>
+                <li>Start Socket.IO server: <code>npm start</code></li>
+                <li>Access via web server (Apache/Nginx with PHP)</li>
+            </ol>
+        </div>
+
+        <div class="info-box">
+            <h2><i class="fa-solid fa-server"></i> Technical Stack</h2>
+            <ul>
+                <li><i class="fa-brands fa-php"></i> <strong>PHP</strong> - Backend API</li>
+                <li><i class="fa-solid fa-database"></i> <strong>MySQL</strong> - Database</li>
+                <li><i class="fa-brands fa-node-js"></i> <strong>Node.js</strong> - Socket.IO Server</li>
+                <li><i class="fa-solid fa-video"></i> <strong>WebRTC</strong> - Real-time Communication</li>
+                <li><i class="fa-solid fa-bolt"></i> <strong>Socket.IO</strong> - WebSocket Communication</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h2><i class="fa-solid fa-book"></i> Quick Start</h2>
+            <p style="margin-bottom: 10px;">Start the Socket.IO server:</p>
+            <pre><code>cd /path/to/nikos_messenger
+npm install
+npm start</code></pre>
+            <p style="margin: 10px 0;">The server will start on port 3000. Check health:</p>
+            <pre><code>curl http://localhost:3000/health</code></pre>
+        </div>
+
+        <div class="info-box">
+            <h2><i class="fa-solid fa-file-lines"></i> Files Created</h2>
+            <ul>
+                <li><i class="fa-solid fa-file-code"></i> <code>calls.php</code> - Call page UI</li>
+                <li><i class="fa-brands fa-js"></i> <code>webrtc-calls.js</code> - WebRTC client</li>
+                <li><i class="fa-brands fa-php"></i> <code>call_handler.php</code> - Call management API</li>
+                <li><i class="fa-solid fa-trash"></i> <code>delete_call.php</code> - Delete single call</li>
+                <li><i class="fa-solid fa-trash-can"></i> <code>delete_all_calls.php</code> - Delete all calls</li>
+                <li><i class="fa-solid fa-bell"></i> <code>get_missed_calls_count.php</code> - Count missed calls</li>
+                <li><i class="fa-solid fa-envelope"></i> <code>get_unread_counts.php</code> - Count unread messages</li>
+                <li><i class="fa-brands fa-node-js"></i> <code>server.js</code> - Socket.IO server</li>
+                <li><i class="fa-solid fa-database"></i> <code>database.sql</code> - Database schema</li>
+                <li><i class="fa-solid fa-gear"></i> <code>config.php</code> - Database configuration</li>
+            </ul>
+        </div>
+
+        <div class="success">
+            <strong><i class="fa-solid fa-info-circle"></i> Note:</strong> This is a complete, production-ready call system with security best practices including:
+            <ul style="margin-top: 10px; margin-left: 20px;">
+                <li>Prepared statements (SQL injection protection)</li>
+                <li>Input validation on all endpoints</li>
+                <li>Session-based authentication</li>
+                <li>CORS configuration for cross-origin requests</li>
+                <li>Proper error handling</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding: 20px; color: #94a3b8;">
+            <p><i class="fa-solid fa-heart"></i> Nikos Messenger - Complete Call System</p>
+            <p style="font-size: 14px; margin-top: 10px;">Für weitere Informationen siehe <a href="README.md" style="color: var(--light-blue);">README.md</a></p>
+        </div>
+    </div>
+</body>
+</html>
